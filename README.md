@@ -21,7 +21,7 @@ task-run() {
 }
 
 task-logs() {
-    awslogs get /aws/lambda/$PROJECT $@
+    awslogs get /aws/lambda/$PROJECT --no-group $@
 }
 
 task-lab() {
@@ -36,10 +36,9 @@ Then, you can run the tasks like:
 
 ```
 $ kar run
-```
-
-```
-$ kar logs
+$ kar run python scripts/test.py
+$ kar logs --timestamp -s "24hr"
+$ kar lab notebooks/analysis.ipynb
 ```
 
 #### Common Use Cases
