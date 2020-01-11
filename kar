@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ -f Karfile ]; then
+	source Karfile
+fi
+
+if [ -f Karfile.sh ]; then
+	source Karfile.sh
+fi
+
+tasks=$(declare -F | cut -d' ' -f3 | grep "task-" | \
+	awk '{gsub("task-",""); print}')
+
+if [ $# -eq 0 ]; then
+    echo "No task given."
+    exit 0
+fi
+
+cmd="$1"
+shift 1
+
+for task in $tasks; do
+	if [ "$cmd" = "$task" ]; then
+		task-$cmd $@
+		exit 0
+	fi
+done
+
+echo "Task $cmd" not found.
+exit 1
