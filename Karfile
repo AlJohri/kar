@@ -3,14 +3,20 @@
 PROJECT=this-is-my-unique-project-name
 AWS_PROFILE=mycompany
 
+#@run
+#+Run command in docker container.
 task-run() {
     docker run -v "$(pwd)" -e AWS_PROFILE=$AWS_PROFILE $@
 }
 
+#@logs
+#+Get logs from AWs Cloudwatch.
 task-logs() {
     awslogs get /aws/lambda/$PROJECT --no-group $@
 }
 
+#@lab
+#+Open Jupter Lab
 task-lab() {
     docker run -v "$(pwd)" -e AWS_PROFILE=$AWS_PROFILE \
         python -m jupyter lab \
