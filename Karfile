@@ -1,3 +1,5 @@
+#!/bin/bash
+
 PROJECT=this-is-my-unique-project-name
 AWS_PROFILE=mycompany
 

@@ -1,18 +1,18 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 
-if [ -f Karfile ]; then
-	source Karfile
-fi
+source $(dirname "$0")/help.sh
 
-if [ -f Karfile.sh ]; then
-	source Karfile.sh
+if [ ! -f Karfile ]; then
+	echo "No Karfile found."
+	exit 1
 fi
 
 tasks=$(declare -F | cut -d' ' -f3 | grep "task-" | \
 	awk '{gsub("task-",""); print}')
 
 if [ $# -eq 0 ]; then
-    echo "No task given."
+    echo "Tasks:"
+	help Karfile
     exit 0
 fi
 
@@ -25,6 +25,11 @@ for task in $tasks; do
 		exit 0
 	fi
 done
+
+if [ "$cmd" = "help" ]; then
+	help Karfile
+	exit 0
+fi
 
 echo "Task $cmd" not found.
 exit 1

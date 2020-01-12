@@ -10,9 +10,11 @@ brew install AlJohri/-/kar
 
 #### Usage
 
-Create a `Karfile` (or `Karfile.sh`):
+Create a `Karfile`:
 
 ```bash
+#!/bin/bash
+
 PROJECT=this-is-my-unique-project-name
 AWS_PROFILE=mycompany
 
@@ -47,3 +49,7 @@ $ kar lab notebooks/analysis.ipynb
 - wrap your custom `docker run` command with preconfigured volumes and port mounts yet still be able to pass arbitrary commands to the docker container: `kar run python scripts/pipeline.py`
 - wrap your custom `jupyter lab` command with preconfigured host/ports and opening of the web browser of your choice: `kar lab`
 - wrap your custom `ecs-cli up` command with preconfigured ecs cluster and aws profile yet still allowing you to change parameters: `kar up --size 3 --instance-type t3.xlarge`
+
+#### Links
+
+- This repository uses `help-sh` for bash docstrings: https://github.com/dhamidi/help-sh
