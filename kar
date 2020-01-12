@@ -7,6 +7,8 @@ if [ ! -f Karfile ]; then
 	exit 1
 fi
 
+source Karfile
+
 tasks=$(declare -F | cut -d' ' -f3 | grep "task-" | \
 	awk '{gsub("task-",""); print}')
 
