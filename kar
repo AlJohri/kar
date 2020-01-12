@@ -1,6 +1,6 @@
 #!/usr/local/bin/bash
 
-source $(dirname "$0")/help.sh
+source $(dirname $(realpath "$0"))/help.sh
 
 if [ ! -f Karfile ]; then
 	echo "No Karfile found."
