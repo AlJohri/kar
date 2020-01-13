@@ -10,6 +10,8 @@ Most task runners focus on allowing you to specify task dependencies, running th
 
 `kar` focuses on **full argument propagation** to allow easily wrapping existing CLI tools. If you need to wrap an existing cli tool to make it easy to run daily tasks, preconfigured with your project-specific settings while still keeping the flexibility of passing arbitray arguments to the original tool, `kar` is for you.
 
+This is alpha software, subject to change. Currently `kar` only supports `bash` but I hope to make it language-agnostic in the future.
+
 #### Common Use Cases
 
 - wrap your custom `awslogs get` command with a preconfigured log group
@@ -87,7 +89,7 @@ $ kar lab notebooks/analysis.ipynb
 
 #### Why not use Make/Rake/Invoke/Runner/etc.?
 
-[Make](https://www.gnu.org/software/make/) syntax **sucks**! It's more annoying and difficult than it's often worth it to write simple tasks in Make. Make doesn't allow easily passing in arguments. You just can't do `make run python scripts/test.py`. While Bash isn't an amazing langauge, it works super well for wrapping existing CLI tools.
+[Make](https://www.gnu.org/software/make/) syntax **sucks**! It's more annoying and difficult than it's often worth it to write simple tasks in Make. Make doesn't allow easily passing in arguments. You just can't do `make run python scripts/test.py`.
 
 [Rake](https://github.com/ruby/rake) argument syntax is weird and it flat out doesn't allow just passing arbitary (hyphenated) arguments to existing cli commands.
 
