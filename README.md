@@ -2,7 +2,7 @@
   <img src="./logo.png" alt="kar">
 </p>
 
-कर (/kəɾ/) is the hindi word for the "do".
+कर (/kəɾ/) is the hindi word for "do".
 
 `kar` is a task runner with a simple goal in mind: make it dead simple to **wrap existing CLI tools**.
 
