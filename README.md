@@ -12,10 +12,11 @@ Most task runners focus on allowing you to specify task dependencies, running th
 
 #### Common Use Cases
 
-- wrap your custom `awslogs get` command with the preconfigured log group for your project: `kar logs`
-- wrap your custom `docker run` command with preconfigured volumes and port mounts yet still be able to pass arbitrary commands to the docker container: `kar run python scripts/pipeline.py`
-- wrap your custom `jupyter lab` command with preconfigured host/ports and opening of the web browser of your choice: `kar lab`
-- wrap your custom `ecs-cli up` command with preconfigured ecs cluster and aws profile yet still allowing you to change parameters: `kar up --size 3 --instance-type t3.xlarge`
+- wrap your custom `awslogs get` command with a preconfigured log group
+- wrap your custom `docker run` command with preconfigured volumes and port mounts
+- wrap your custom `jupyter lab` command with preconfigured host/ports/browser
+- wrap your custom `ecs-cli up` command with preconfigured ecs cluster name and aws profile with the flexibility to change instance type or cluster size, i.e. `kar up --size 3 --instance-type t3.xlarge`
+- any tool with a slightly annoying, hard to remember interface. anything in the awscli usually takes the 🍰
 
 #### Installation
 
@@ -35,6 +36,8 @@ wget -P /usr/local/bin https://raw.githubusercontent.com/AlJohri/kar/master/help
 _The linux install will be improved later into a snap package or installer script._
 
 #### Usage
+
+The `Karfile` is just a bash script. Any function starting with `task-` is a task. Annotate your tasks with the comments as shown below to get a nice interface when you run `kar help`.
 
 Create a `Karfile`:
 
@@ -81,6 +84,22 @@ $ kar run python scripts/test.py
 $ kar logs --timestamp -s "24hr"
 $ kar lab notebooks/analysis.ipynb
 ```
+
+#### Why not use Make/Rake/Invoke/Runner/etc.?
+
+[Make](https://www.gnu.org/software/make/) syntax **sucks**! It's more annoying and difficult than it's often worth it to write simple tasks in Make. Make doesn't allow easily passing in arguments. You just can't do `make run python scripts/test.py`. While Bash isn't an amazing langauge, it works super well for wrapping existing CLI tools.
+
+[Rake](https://github.com/ruby/rake) argument syntax is weird and it flat out doesn't allow just passing arbitary (hyphenated) arguments to existing cli commands.
+
+[Invoke](https://github.com/pyinvoke/invoke/) gets much closer to what I was looking for but it allows you to run multiple tasks in a single invocation which [doesn't make passing arbitrary arguments possible](https://github.com/pyinvoke/invoke/issues/693).
+
+[Runner](https://github.com/stylemistake/runner) also gets pretty close to what I was looking for but it also allows running multiple tasks in a single invocation which is [incongruent with passing arbitrary arguments](https://github.com/stylemistake/runner/issues/37).
+
+<!--
+[NPM Scripts](https://docs.npmjs.com/misc/scripts) requries node and ...
+[Gulp](https://gulpjs.com/) requires node and ...
+[Grunt](https://gruntjs.com/) requires node and ...
+-->
 
 #### Credit
 
