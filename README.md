@@ -91,9 +91,9 @@ $ kar lab notebooks/analysis.ipynb
 
 [Rake](https://github.com/ruby/rake) argument syntax is weird and it flat out doesn't allow just passing arbitary (hyphenated) arguments to existing cli commands.
 
-[Invoke](https://github.com/pyinvoke/invoke/) gets much closer to what I was looking for but it allows you to run multiple tasks in a single invocation which [doesn't make passing arbitrary arguments possible](https://github.com/pyinvoke/invoke/issues/693).
+[Invoke](https://github.com/pyinvoke/invoke/) gets much closer but it allows running multiple tasks in a single invocation which [doesn't make passing arbitrary arguments possible](https://github.com/pyinvoke/invoke/issues/693).
 
-[Runner](https://github.com/stylemistake/runner) also gets pretty close to what I was looking for but it also allows running multiple tasks in a single invocation which is [incongruent with passing arbitrary arguments](https://github.com/stylemistake/runner/issues/37).
+[Runner](https://github.com/stylemistake/runner) gets pretty close but it also allows running multiple tasks in a single invocation which is [incongruent with passing arbitrary arguments](https://github.com/stylemistake/runner/issues/37).
 
 <!--
 [NPM Scripts](https://docs.npmjs.com/misc/scripts) requries node and ...
@@ -101,6 +101,6 @@ $ kar lab notebooks/analysis.ipynb
 [Grunt](https://gruntjs.com/) requires node and ...
 -->
 
-#### Credit
+#### Credits
 
-- This repository uses `help-sh` for bash docstrings: https://github.com/dhamidi/help-sh
+- This project uses `help-sh` for bash docstrings: https://github.com/dhamidi/help-sh
