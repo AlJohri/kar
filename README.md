@@ -6,9 +6,9 @@
 
 `kar` is a task runner with a simple goal in mind: make it dead simple to **wrap existing CLI tools**.
 
-Most task runners focus on allowing you to specify task dependencies, running thing in parallel, passing in multiple tasks at the same time, etc. `kar` does none of that.
+Most task runners focus on allowing you to specify task dependencies, running things in parallel, passing in multiple tasks at the same time, etc. `kar` does none of that.
 
-`kar` focuses on **full argument propagation** to allow easily wrapping existing CLI tools. If you need to wrap an existing cli tool to make it easy to run daily tasks, preconfigured with your project-specific settings, while still keeping flexibility of passing arbitray arguments to the original tool, `kar` is for you.
+`kar` focuses on **full argument propagation** to allow easily wrapping existing CLI tools. If you need to wrap an existing cli tool to make it easy to run daily tasks, preconfigured with your project-specific settings while still keeping the flexibility of passing arbitray arguments to the original tool, `kar` is for you.
 
 #### Common Use Cases
 
