@@ -10,7 +10,7 @@ Most task runners focus on allowing you to specify task dependencies, running th
 
 `kar` focuses on **full argument propagation** to allow easily wrapping existing CLI tools. If you need to wrap an existing cli tool to make it easy to run daily tasks, preconfigured with your project-specific settings while still keeping the flexibility of passing arbitray arguments to the original tool, `kar` is for you.
 
-This is alpha software, subject to change. Currently `kar` only supports `bash` but I hope to make it language-agnostic in the future.
+**⚠This is alpha software, subject to change.⚠**
 
 #### Common Use Cases
 
@@ -41,10 +41,13 @@ _The linux install will be improved later into a snap package or installer scrip
 
 The `Karfile` is just a bash script. Any function starting with `task-` is a task. Annotate your tasks with the comments as shown below to get a nice interface when you run `kar help`.
 
-Create a `Karfile`:
+Create a `Karfile`. Currently Bash and Python are supported:
+
+<details>
+	<summary>Bash</summary>
 
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 PROJECT=this-is-my-unique-project-name
 AWS_PROFILE=mycompany
@@ -70,6 +73,31 @@ task-lab() {
             --allow-root --no-browser 1>/dev/null $@
 }
 ```
+
+</details>
+
+<details>
+	<summary>Python</summary>
+
+```python
+#!/usr/bin/env python
+
+def task_run(raw):
+    """
+    Run command in docker container.
+    """
+    run(f"docker run -it busybox {raw}")
+
+
+@parse(argument("instance_name", help="EC2 instance name"))
+def task_ec2(args):
+    """
+    Blah blah blah
+    """
+    print(f"Starting EC2 instance {args.instance_name}")
+```
+
+</details>
 
 Then, you can run the tasks like:
 
