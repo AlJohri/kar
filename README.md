@@ -28,6 +28,8 @@ On macOS (or Linux with [Linuxbrew](https://docs.brew.sh/Homebrew-on-Linux)):
 brew install AlJohri/-/kar
 ```
 
+<!--
+
 On Linux:
 
 ```
@@ -36,6 +38,8 @@ wget -P /usr/local/bin https://raw.githubusercontent.com/AlJohri/kar/master/help
 ```
 
 _The linux install will be improved later into a snap package or installer script._
+
+-->
 
 #### Usage
 
