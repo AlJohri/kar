@@ -25,7 +25,7 @@ for task in $tasks; do
 done
 
 if [ "$cmd" = "help" ]; then
-	help $KARFILE
+	help $KARFILE "$@"
 	exit 0
 fi
 
