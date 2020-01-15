@@ -4,6 +4,7 @@ import os
 import sys
 import shlex
 import inspect
+import argparse
 import textwrap
 import functools
 import subprocess
@@ -29,18 +30,52 @@ def run_variadic(func, *args, **kwargs):
     else:
         func(*args, **kwargs)
 
+def cli_from_func(func):
+    argspec = inspect.getfullargspec(func)
+    parser = argparse.ArgumentParser(
+        prog=func.__dict__["task"],
+        description=textwrap.dedent(str(func.__doc__ or ''))
+    )
+
+    kwonlydefaults = argspec.kwonlydefaults or {}
+
+    if argspec.varkw:
+        raise NotImplementedError()
+
+    for arg in argspec.args:
+        parser.add_argument(arg, default=kwonlydefaults.get(arg))
+
+    for arg in argspec.kwonlyargs:
+        if kwonlydefaults[arg] == False:
+            action = 'store_true'
+        elif kwonlydefaults[arg] == True:
+            action = 'store_false'
+        else:
+            action = 'store'
+        parser.add_argument(f'--{arg}', action=action, default=kwonlydefaults[arg])
+
+    if argspec.varargs:
+        parser.add_argument(argspec.varargs, nargs='?')
+
+    return parser
+
 def inject_globals(module):
 
     module.shell = functools.partial(subprocess.run, shell=True)
 
-    def task(func=None, *, name=None, split=False):
+    def task(func=None, *, name=None, split=False, parse=False):
         if func is None:
-            return functools.partial(task, name=name, split=split)
+            return functools.partial(task, name=name, split=split, parse=parse)
         func.__dict__["task"] = name or func.__name__
 
         @functools.wraps(func)
         def decorator(*args, **kwargs):
-            if split:
+            if parse:
+                argument_string = args[0]
+                parser = cli_from_func(func)
+                args = parser.parse_args(shlex.split(argument_string))
+                return func(**args.__dict__)
+            elif split:
                 argument_string = args[0]
                 return func(*shlex.split(argument_string))
             else:
@@ -49,7 +84,7 @@ def inject_globals(module):
 
     module.task = task
 
-    # # don't expose argument parsing yet
+    # # don't expose full argument parsing yet
     # import argparse
     # def argument(*names_or_flags, **kwargs):
     #     return names_or_flags, kwargs
