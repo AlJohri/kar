@@ -83,24 +83,32 @@ task-lab() {
 <details>
 	<summary>Python</summary>
 
-Any function starting with `task_` is a task. Annotate your tasks with the docstrings as shown below to get a nice interface when you run `kar help`.
+Any function decorated with `@task` is a task. Annotate your tasks with the docstrings as shown below to get a nice interface when you run `kar help`.
 
 ```python
 #!/usr/bin/env python
 
-def task_run(raw):
+@task
+def run(raw):
     """
     Run command in docker container.
     """
-    run(f"docker run -it busybox {raw}")
+    shell(f"docker run -it ubuntu {raw}")
 
+@task(split=True)
+def ec2(instance_name, vpc_tag):
+    """
+    Run command in docker container.
+    """
+    print(f"Starting EC2 instance in {vpc_tag} VPC with name: {instance_name}")
 
-@parse(argument("instance_name", help="EC2 instance name"))
-def task_ec2(args):
+@task(name='list')
+def list_():
     """
-    Blah blah blah
+    List files in current directory.
     """
-    print(f"Starting EC2 instance {args.instance_name}")
+    shell(f"ls -lha")
+
 ```
 
 </details>

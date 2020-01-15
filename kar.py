@@ -2,8 +2,11 @@
 
 import os
 import sys
+import shlex
 import inspect
 import textwrap
+import functools
+import subprocess
 import importlib
 import importlib.util
 
@@ -19,53 +22,72 @@ def load_karfile(path):
     return karfile
 
 
+def run_variadic(func, *args, **kwargs):
+    argspec = inspect.getfullargspec(func)
+    if len(argspec.args) == 0 and argspec.varargs is None:
+        func()
+    else:
+        func(*args, **kwargs)
+
 def inject_globals(module):
 
-    import shlex
-    import textwrap
-    import argparse
-    import functools
-    from subprocess import run
+    module.shell = functools.partial(subprocess.run, shell=True)
 
-    module.shlex = shlex
-    module.argparse = argparse
-    module.textwrap = textwrap
-    module.functools = functools
-    module.run = functools.partial(run, shell=True)
+    def task(func=None, *, name=None, split=False):
+        if func is None:
+            return functools.partial(task, name=name, split=split)
+        func.__dict__["task"] = name or func.__name__
 
-    def argument(*names_or_flags, **kwargs):
-        return names_or_flags, kwargs
+        @functools.wraps(func)
+        def decorator(*args, **kwargs):
+            if split:
+                argument_string = args[0]
+                return func(*shlex.split(argument_string))
+            else:
+                run_variadic(func, *args, **kwargs)
+        return decorator
 
-    def parse(*subparser_args, name=None, **parser_kwargs):
-        def wrap(func):
-            @functools.wraps(func)
-            def decorator(argument_string):
-                parser = argparse.ArgumentParser(
-                    name or func.__name__.replace('task_', ''),
-                    description=textwrap.dedent(str(func.__doc__)),
-                    **parser_kwargs,
-                )
-                for args, kwargs in subparser_args:
-                    parser.add_argument(*args, **kwargs)
-                args = parser.parse_args(shlex.split(argument_string))
-                return func(args)
+    module.task = task
 
-            return decorator
+    # # don't expose argument parsing yet
+    # import argparse
+    # def argument(*names_or_flags, **kwargs):
+    #     return names_or_flags, kwargs
+    # def parse(*subparser_args, name=None, **parser_kwargs):
+    #     def wrap(func):
+    #         @functools.wraps(func)
+    #         def decorator(argument_string):
+    #             parser = argparse.ArgumentParser(
+    #                 name or func.__name__.replace("task_", ""),
+    #                 description=textwrap.dedent(str(func.__doc__)),
+    #                 **parser_kwargs,
+    #             )
+    #             for args, kwargs in subparser_args:
+    #                 parser.add_argument(*args, **kwargs)
+    #             args = parser.parse_args(shlex.split(argument_string))
+    #             return func(args)
 
-        return wrap
+    #         return decorator
 
-    module.argument = argument
-    module.parse = parse
+    #     return wrap
+    # module.argument = argument
+    # module.parse = parse
 
 
 def help(tasks, name=None):
 
     if name:
         task = tasks[cmd]
-        print("{0:25}{1}".format(name, textwrap.dedent(str(task.__doc__)).strip(),))
+        print(
+            "{0:25}{1}".format(name, textwrap.dedent(str(task.__doc__ or "")).strip(),)
+        )
     else:
         for name, task in tasks.items():
-            print("{0:25}{1}".format(name, textwrap.dedent(str(task.__doc__)).strip(),))
+            print(
+                "{0:25}{1}".format(
+                    name, textwrap.dedent(str(task.__doc__ or "")).strip(),
+                )
+            )
 
 
 if __name__ == "__main__":
@@ -73,9 +95,9 @@ if __name__ == "__main__":
     karfile = load_karfile(KARFILE)
 
     tasks = {
-        fn.__name__.replace("task_", ""): fn
+        fn.__dict__["task"]: fn
         for name, fn in inspect.getmembers(karfile, inspect.isfunction)
-        if fn.__name__.startswith("task_")
+        if fn.__dict__.get("task")
     }
 
     sys.argv.pop(0)
@@ -88,10 +110,7 @@ if __name__ == "__main__":
 
     if cmd not in tasks:
         print(f"Task {cmd} not found.")
+        exit(1)
 
     task = tasks[cmd]
-    argspec = inspect.getfullargspec(task)
-    if len(argspec.args) == 1 or argspec.varargs is not None:
-        task(" ".join(sys.argv))
-    else:
-        task()
+    run_variadic(task, " ".join(sys.argv))
