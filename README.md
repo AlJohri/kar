@@ -119,7 +119,7 @@ def cleandb(*, prod=False):
     List files in current directory.
     """
     db = "local"
-    if prod and input("Are you sure you want to do this? [y/n]") != "y":
+    if prod and input("Are you sure you want to do this? [y/n] ") != "y":
         exit(1)
         db = "prod"
     print(f"Cleaning {db} database...")
