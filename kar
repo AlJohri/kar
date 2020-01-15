@@ -1,37 +1,19 @@
 #!/usr/local/bin/bash
 
-source $(dirname $(realpath "$0"))/help.sh
+KARFILE=${KARFILE:-Karfile}
 
-if [ ! -f Karfile ]; then
+if [ ! -f $KARFILE ]; then
 	echo "No Karfile found."
 	exit 1
 fi
 
-source Karfile
+hashbang=$(head -n 1 $KARFILE)
 
-tasks=$(declare -F | cut -d' ' -f3 | grep "task-" | \
-	awk '{gsub("task-",""); print}')
-
-if [ $# -eq 0 ]; then
-    echo "Tasks:"
-	help Karfile
-    exit 0
+if [[ $hashbang == *"bash"* ]]; then
+	$(dirname $(realpath "$0"))/kar.sh "$@"
+elif [[ $hashbang == *"python"* ]]; then
+	$(dirname $(realpath "$0"))/kar.py "$@"
+else
+	echo "Unable to figure out langauge using Karfile's hashbang"
+	exit 1
 fi
-
-cmd="$1"
-shift 1
-
-for task in $tasks; do
-	if [ "$cmd" = "$task" ]; then
-		task-$cmd $@
-		exit 0
-	fi
-done
-
-if [ "$cmd" = "help" ]; then
-	help Karfile
-	exit 0
-fi
-
-echo "Task $cmd" not found.
-exit 1
