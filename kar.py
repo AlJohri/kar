@@ -1,14 +1,23 @@
 #!/usr/local/bin/python3
 
+import os
 import sys
+import inspect
+import textwrap
 import importlib
 import importlib.util
 
-if len(sys.argv) == 1:
-    print("insert help here...")
-    exit(0)
+KARFILE = os.getenv("KARFILE", "Karfile")
 
-sys.argv.pop(0)
+
+def load_karfile(path):
+    importlib.machinery.SOURCE_SUFFIXES.append("")
+    spec = importlib.util.spec_from_file_location("karfile", path)
+    karfile = importlib.util.module_from_spec(spec)
+    inject_globals(karfile)
+    spec.loader.exec_module(karfile)
+    return karfile
+
 
 def inject_globals(module):
 
@@ -27,14 +36,12 @@ def inject_globals(module):
     def argument(*names_or_flags, **kwargs):
         return names_or_flags, kwargs
 
-
-    def command(*subparser_args, name=None, **parser_kwargs):
+    def parse(*subparser_args, name=None, **parser_kwargs):
         def wrap(func):
-            func.__dict__['parse'] = True
             @functools.wraps(func)
             def decorator(argument_string):
                 parser = argparse.ArgumentParser(
-                    name or func.__name__,
+                    name or func.__name__.replace('task_', ''),
                     description=textwrap.dedent(str(func.__doc__)),
                     **parser_kwargs,
                 )
@@ -42,31 +49,49 @@ def inject_globals(module):
                     parser.add_argument(*args, **kwargs)
                 args = parser.parse_args(shlex.split(argument_string))
                 return func(args)
+
             return decorator
+
         return wrap
 
     module.argument = argument
-    module.command = command
+    module.parse = parse
 
 
-importlib.machinery.SOURCE_SUFFIXES.append('')
-spec = importlib.util.spec_from_file_location('karfile', 'Karfile')
-karfile = importlib.util.module_from_spec(spec)
-inject_globals(karfile)
-spec.loader.exec_module(karfile)
+def help(tasks, name=None):
 
-cmd = sys.argv[0]
-sys.argv.pop(0)
+    if name:
+        task = tasks[cmd]
+        print("{0:25}{1}".format(name, textwrap.dedent(str(task.__doc__)).strip(),))
+    else:
+        for name, task in tasks.items():
+            print("{0:25}{1}".format(name, textwrap.dedent(str(task.__doc__)).strip(),))
 
-if f'task_{cmd}' not in dir(karfile):
-    print(f"Task {cmd} not found.")
 
-task = getattr(karfile, f'task_{cmd}')
+if __name__ == "__main__":
 
-import inspect
-argspec = inspect.getfullargspec(task)
+    karfile = load_karfile(KARFILE)
 
-if len(argspec.args) == 1 or argspec.varargs is not None:
-    task(' '.join(sys.argv))
-else:
-    task()
+    tasks = {
+        fn.__name__.replace("task_", ""): fn
+        for name, fn in inspect.getmembers(karfile, inspect.isfunction)
+        if fn.__name__.startswith("task_")
+    }
+
+    sys.argv.pop(0)
+    if len(sys.argv) == 0:
+        print("Tasks:")
+        help(tasks)
+        exit(0)
+
+    cmd = sys.argv.pop(0)
+
+    if cmd not in tasks:
+        print(f"Task {cmd} not found.")
+
+    task = tasks[cmd]
+    argspec = inspect.getfullargspec(task)
+    if len(argspec.args) == 1 or argspec.varargs is not None:
+        task(" ".join(sys.argv))
+    else:
+        task()
