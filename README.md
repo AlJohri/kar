@@ -39,12 +39,12 @@ _The linux install will be improved later into a snap package or installer scrip
 
 #### Usage
 
-The `Karfile` is just a bash script. Any function starting with `task-` is a task. Annotate your tasks with the comments as shown below to get a nice interface when you run `kar help`.
-
 Create a `Karfile`. Currently Bash and Python are supported:
 
 <details>
 	<summary>Bash</summary>
+
+Any function starting with `task-` is a task. Annotate your tasks with the comments as shown below to get a nice interface when you run `kar help`.
 
 ```bash
 #!/usr/bin/env bash
@@ -78,6 +78,8 @@ task-lab() {
 
 <details>
 	<summary>Python</summary>
+
+Any function starting with `task_` is a task. Annotate your tasks with the docstrings as shown below to get a nice interface when you run `kar help`.
 
 ```python
 #!/usr/bin/env python
