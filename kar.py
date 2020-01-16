@@ -66,7 +66,7 @@ def inject_globals(module):
     def task(func=None, *, name=None, split=False, parse=False):
         if func is None:
             return functools.partial(task, name=name, split=split, parse=parse)
-        func.__dict__["task"] = name or func.__name__
+        func.__dict__["task"] = name or func.__name__.replace("_", "-")
 
         @functools.wraps(func)
         def decorator(*args, **kwargs):

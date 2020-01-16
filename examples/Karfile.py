@@ -35,3 +35,7 @@ def cleandb(*, prod=False):
         exit(1)
         db = "prod"
     print(f"Cleaning {db} database...")
+
+@task
+def download_s3():
+    print("downloading data from s3...")
