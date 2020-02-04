@@ -20,7 +20,7 @@ shift 1
 for task in $tasks; do
 	if [ "$cmd" = "$task" ]; then
 		task-$cmd $@
-		exit 0
+		exit $?
 	fi
 done
 
