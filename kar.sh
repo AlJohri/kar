@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/usr/bin/env bash
 
 source $(dirname $(realpath "$0"))/help.sh
 
